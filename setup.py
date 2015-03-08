@@ -11,7 +11,8 @@ setup(name='HackerRankSetup',
       author_email='bionikspoon@gmail.com',
       packages=find_packages(),
       include_package_data=True,
-      install_requires=['click'],
+      install_requires=['click', 'mock', 'nose', 'requests'],
+      package_data={'': ['config.cfg']},
       entry_points="""
       [console_scripts]
       hackerrank=hackerrank:cli

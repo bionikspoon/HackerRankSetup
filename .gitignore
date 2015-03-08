@@ -90,3 +90,5 @@ docs/_build/
 target/
 
 
+### Custom
+.tmp

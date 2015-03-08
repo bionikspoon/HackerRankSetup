@@ -2,7 +2,7 @@
 import ConfigParser
 import os
 
-import HackerRankSetup.HackerRankReadme
+import hackerranksetup.HackerRankReadme
 
 
 config = ConfigParser.SafeConfigParser()
@@ -17,6 +17,6 @@ assets = os.path.realpath(
 
 url = 'https://www.hackerrank.com/challenges/sherlock-and-queries'
 
-print HackerRankSetup.HackerRankReadme.HackerRankReadme(url, root=root,
+print hackerranksetup.HackerRankReadme.HackerRankReadme(url, root=root,
                                                         workspace=workspace,
                                                         assets=assets).run()

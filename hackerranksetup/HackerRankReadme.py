@@ -6,7 +6,7 @@ import re
 
 import requests
 
-from HackerRankSetup.TexHandler import TexHandler
+from hackerranksetup.TexHandler import TexHandler
 
 
 class HackerRankReadme(object):

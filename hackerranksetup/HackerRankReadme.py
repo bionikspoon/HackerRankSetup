@@ -30,9 +30,7 @@ class HackerRankReadme(object):
         self._source_file_name = None
 
     @property
-    def directory(self):
-        if not os.path.exists(self._workspace):
-            os.makedirs(self._workspace)
+    def workspace(self):
         return self._workspace
 
     @property
@@ -51,8 +49,14 @@ class HackerRankReadme(object):
         return self._readme
 
     def get_rest_endpoint(self, from_url):
-        url_slug = re.search(r'/([a-z1-9-]+)/?$', from_url).group(1)
-        return self.rest_base + url_slug
+        try:
+            url_slug = re.search(r'/([a-z1-9-]+)/?$', from_url).group(1)
+        except AttributeError, e:
+            url_invalid = "'NoneType' object has no attribute 'group'"
+            error_message = 'Failed to get_rest_endpoint(%s)' % from_url
+            raise ValueError(error_message) if e.message == url_invalid else e
+        else:
+            return self.rest_base + url_slug
 
     @property
     def source_file_name(self):
@@ -61,17 +65,21 @@ class HackerRankReadme(object):
             else '{}.md'.format(self.model['slug']))
         return self._source_file_name
 
-    def run(self):
-        with codecs.open(os.path.join(self.directory, self.source_file_name),
+    def save_source(self):
+        with codecs.open(os.path.join(self.workspace, self.source_file_name),
                          'w', encoding='utf8') as f:
             f.write(self.source)
-        with codecs.open(os.path.join(self.directory, self.readme_file_name),
+        return self
+
+    def save_readme(self):
+        with codecs.open(os.path.join(self.workspace, self.readme_file_name),
                          'w', encoding='utf8') as f:
             f.write(self.readme)
         return self
 
     def get_model(self):
         response = requests.get(self.rest_endpoint)
+        response.raise_for_status()
         return response.json()['model']
 
     def build_readme(self):
@@ -125,11 +133,12 @@ class HackerRankReadme(object):
         return source
 
     def __str__(self):
-        return self.readme.encode('utf-8')
+        return self.readme.encode()
 
 
 if __name__ == "__main__":
     _directory = '../proof_of_concept/'
     _assets = '../test_assets/'
     _url = raw_input('>>> ')
-    print HackerRankReadme(_url, workspace=_directory, assets=_assets).run()
+    print HackerRankReadme(_url, workspace=_directory,
+                           assets=_assets).save_source().save_readme()

@@ -18,8 +18,7 @@ root_directory = os.path.realpath(os.path.expanduser('~/code/HackerRankSetup'))
 
 class TestHackerRankReadme(unittest.TestCase):
     expected_assets = lambda *x: os.path.realpath(
-        os.path.join(root_directory, 'tests/test_assets',
-                     x[-1]))
+        os.path.join(root_directory, 'tests/test_assets', x[-1]))
 
     with open(expected_assets('hackerrank_response.p'), 'rb') as response:
         hackerrank_response = cPickle.load(response)
@@ -97,7 +96,7 @@ class TestHackerRankReadme(unittest.TestCase):
             test.assert_equals(readme, expected, self.diff(readme, expected))
 
     def test_run_creates_source(self):
-        self.handler.run()
+        self.handler.save_source()
         expected_source = self.expected_assets('sherlock-and-queries.md')
         actual_source = os.path.join(self._temp_dir, 'sherlock-and-queries.md')
         with open(expected_source) as expected_source, open(
@@ -110,7 +109,7 @@ class TestHackerRankReadme(unittest.TestCase):
         test_source = self.expected_assets('sherlock-and-queries.md')
         with open(test_source) as test_source:
             self.handler._source = test_source.read()
-        self.handler.run()
+        self.handler.save_readme()
         expected_readme = self.expected_assets('README.md')
         actual_readme = os.path.join(self._temp_dir, 'README.md')
 
@@ -119,6 +118,10 @@ class TestHackerRankReadme(unittest.TestCase):
             expected = expected_readme.read()
             actual = actual_readme.read()
             test.assert_equals(expected, actual, self.diff(actual, expected))
+
+    def test_throw_error_invalid_url(self):
+        bad_url = 'asdfasdf'
+        test.assert_raises(ValueError, self.handler.get_rest_endpoint, bad_url)
 
     @staticmethod
     def diff(actual, expected):

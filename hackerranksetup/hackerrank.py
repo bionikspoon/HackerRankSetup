@@ -6,14 +6,13 @@ import pkg_resources
 import os.path
 
 # Setup
-import requests
-import hackerranksetup.HackerRankReadme as HRReadme
+from hackerranksetup.Workspace import Workspace
 
 CONFIG_FILE = pkg_resources.resource_stream(__name__, 'config/config.cfg')
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
-self_dir = os.path.dirname(os.path.realpath(__file__))
-logfile = os.path.join(self_dir, 'logs', 'hackerranksetup.log')
+SELF_PATH = os.path.dirname(os.path.realpath(__file__))
+logfile = os.path.join(SELF_PATH, 'logs', 'hackerranksetup.log')
 
 logging.basicConfig(filename=logfile, filemode='w', level=logging.INFO)
 logging.getLogger('requests').setLevel(logging.WARNING)
@@ -51,31 +50,28 @@ def cli(ctx, debug):
 @cli.command()
 @click.argument('url')
 @click.pass_context
-def set(ctx, url):
+def new(ctx, url):
     """Setup new workspace."""
 
-    logging.info('set:%s', url)
+    logging.info('new:%s', url)
     logging.debug('ctx.obj:%s', ctx.obj)
 
-    try:
-        hrm = HRReadme.HackerRankReadme(url, root=ctx.obj['root'],
-                                        workspace=ctx.obj['workspace'],
-                                        assets=ctx.obj['assets'])
-        output = hrm.save_source().save_readme()
-    except (requests.HTTPError, ValueError), e:
-        logging.error("Requests Error:%s", e)
-        ctx.fail('Must be valid HackerRank challenge URL')
-    else:
-        logging.info('Readme created at %s', hrm.workspace)
-        logging.debug('Readme Output:\n%s', output)
+    workspace = Workspace(root=ctx.obj['root'], workspace=ctx.obj['workspace'],
+                          assets=ctx.obj['assets'])
+    workspace.new(url)
 
 
 @cli.command()
-@click.pass_obj
-def publish(obj):
+@click.pass_context
+def publish(ctx):
     """Publish current puzzle."""
-    click.echo('Publish!')
 
+    logging.info('publish')
+    logging.debug('ctx.obj:%s', ctx.obj)
+
+    workspace = Workspace(root=ctx.obj['root'], workspace=ctx.obj['workspace'],
+                          assets=ctx.obj['assets'])
+    workspace.publish()
 
 if __name__ == '__main__':
     cli()

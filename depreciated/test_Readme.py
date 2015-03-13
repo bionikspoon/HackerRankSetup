@@ -9,9 +9,9 @@ import os.path
 
 import mock
 import nose.tools as test
-import hackerranksetup.Readme
 
-from hackerranksetup.Readme import Readme
+import depreciated.Readme
+from depreciated import Readme
 
 
 root_directory = os.path.realpath(os.path.expanduser('~/code/HackerRankSetup'))
@@ -50,13 +50,13 @@ class TestReadme(unittest.TestCase):
         self.addCleanup(th_patcher.stop)
         test_tex = self.MockTexHandler.return_value
         test_tex.get.side_effect = self.tex_response.get
-        assert hackerranksetup.Readme.TexImage is self.MockTexHandler
+        assert depreciated.Readme.TexImage is self.MockTexHandler
 
         rq_patcher = mock.patch('hackerranksetup.Readme.requests')
         self.addCleanup(rq_patcher.stop)
         self.MockRequests = rq_patcher.start()
         self.MockRequests.get.return_value = self.hackerrank_response
-        assert hackerranksetup.Readme.requests is self.MockRequests
+        assert depreciated.Readme.requests is self.MockRequests
 
     def tearDown(self):
         del self.handler

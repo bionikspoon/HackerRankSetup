@@ -6,7 +6,7 @@ import re
 
 import requests
 
-from hackerranksetup.TexImage import TexImage
+from depreciated import TexImage
 
 
 class Readme(object):

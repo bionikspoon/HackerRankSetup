@@ -9,7 +9,7 @@ import os
 import mock
 import nose.tools as test
 
-import hackerranksetup.TexImage
+import depreciated.TexImage
 
 
 root_directory = os.path.realpath(os.path.expanduser('~/code/HackerRankSetup'))
@@ -39,14 +39,14 @@ class TestTexImage(unittest.TestCase):
         self.addCleanup(patcher.stop)
         self.mock_requests = patcher.start()
         self.mock_requests.get.return_value = self.tex_response
-        assert hackerranksetup.TexImage.requests is self.mock_requests
+        assert depreciated.TexImage.requests is self.mock_requests
 
-        self.tex = hackerranksetup.TexImage.TexImage(assets=self.temp_assets)
+        self.tex = depreciated.TexImage.TexImage(assets=self.temp_assets)
 
 
     def test_requests_properly_mocked(self):
         test.assert_equals(self.mock_requests,
-                           hackerranksetup.TexImage.requests)
+                           depreciated.TexImage.requests)
 
     def test_texhandler_initializes_properly(self):
         actual = os.path.realpath(self.tex.assets)

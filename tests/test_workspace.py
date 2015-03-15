@@ -10,8 +10,7 @@ import os.path
 import mock
 import nose.tools as test
 
-import hackerranksetup
-from hackerranksetup.Workspace import Challenge, Readme, TexImage
+from hackerranksetup import Challenge, Readme
 
 
 root_directory = os.path.realpath(os.path.expanduser('~/code/HackerRankSetup'))
@@ -26,7 +25,6 @@ class TestWorkspace(unittest.TestCase):
         tex_response = json.load(response)
     test_url = ('https://www.hackerrank.com/'
                 'challenges/sherlock-and-queries')
-    root = os.path.realpath('./')
     _temp_dir = None
 
     @classmethod
@@ -42,22 +40,22 @@ class TestWorkspace(unittest.TestCase):
             shutil.rmtree(cls._temp_dir)
 
     def setUp(self):
-        self.challenge = Challenge(self.test_url)
-        self.readme = Readme(self.challenge, destination=self._temp_dir,
-                             assets=self.assets)
+        self.challenge = Challenge.Challenge(self.test_url)
+        self.readme = Readme.Readme(self.challenge, destination=self._temp_dir,
+                                    assets=self.assets)
 
-        th_patcher = mock.patch('hackerranksetup.Workspace.TexImage')
+        th_patcher = mock.patch('hackerranksetup.Readme.TexImage')
         self.MockTexHandler = th_patcher.start()
         self.addCleanup(th_patcher.stop)
         test_tex = self.MockTexHandler.return_value
         test_tex.get.side_effect = self.tex_response.get
-        assert hackerranksetup.Workspace.TexImage is self.MockTexHandler
+        assert Readme.TexImage is self.MockTexHandler
 
-        rq_patcher = mock.patch('hackerranksetup.Workspace.requests')
+        rq_patcher = mock.patch('hackerranksetup.Challenge.requests')
         self.addCleanup(rq_patcher.stop)
         self.MockRequests = rq_patcher.start()
         self.MockRequests.get.return_value = self.hackerrank_response
-        assert hackerranksetup.Workspace.requests is self.MockRequests
+        assert Challenge.requests is self.MockRequests
 
     def tearDown(self):
         del self.readme

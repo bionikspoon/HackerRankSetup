@@ -1,9 +1,11 @@
 # coding=utf-8
 import ConfigParser
-import click
 import logging
-import pkg_resources
 import os.path
+
+import click
+import pkg_resources
+
 
 # Setup
 from hackerranksetup.Workspace import Workspace
@@ -72,6 +74,7 @@ def publish(ctx):
     workspace = Workspace(root=ctx.obj['root'], workspace=ctx.obj['workspace'],
                           assets=ctx.obj['assets'])
     workspace.publish()
+
 
 if __name__ == '__main__':
     cli()

@@ -6,10 +6,10 @@ import os.path
 import click
 import pkg_resources
 
-
-# Setup
 from hackerranksetup.Workspace import Workspace
 
+
+# Setup
 CONFIG_FILE = pkg_resources.resource_stream(__name__, 'config/config.cfg')
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 

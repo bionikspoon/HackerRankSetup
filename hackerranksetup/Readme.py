@@ -7,14 +7,14 @@ from hackerranksetup import TexImage
 
 
 class Readme(object):
-    hackerrank_logo = (
-        'https://www.hackerrank.com/assets/brand/typemark_60x200.png')
+    hackerrank_logo = ('https://www.hackerrank.com'
+                       '/assets/brand/typemark_60x200.png')
 
-    def __init__(self, challenge, destination, assets, source=None):
+    def __init__(self, challenge, destination, assets):
         self.challenge = challenge
         self.destination = destination
         self.assets = assets
-        self._source = source
+        self._source = None
         self._readme = None
 
     def save(self):
@@ -78,6 +78,6 @@ class Readme(object):
 
             for k, v in footnote.iteritems():
                 link = urllib.pathname2url(os.path.join(relpath_assets, v))
-                readme += '\n' + '[{}]:{}'.format(k, link)
+                readme += '\n[{}]:{}'.format(k, link)
             self._readme = readme
         return self._readme

@@ -1,6 +1,6 @@
 # coding=utf-8
 import hashlib
-import os
+import os.path
 
 import requests
 
@@ -15,12 +15,15 @@ class TexImage(object):
         hash_id = hashlib.md5(code).hexdigest()
         file_name = '{}.{}'.format(hash_id, 'png')
         file_path = os.path.join(self.assets, file_name)
-        if not os.path.isfile(file_path):
+
+        is_new = not os.path.isfile(file_path)
+        if is_new:
             self.save(code, file_path)
         return file_name
 
     def save(self, code, file_path):
         params = {'cht': 'tx', 'chs': 20, 'chl': code}
         response = requests.get(self.url_endpoint, params=params)
+
         with open(file_path, 'wb') as f:
             f.write(response.content)

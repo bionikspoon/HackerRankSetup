@@ -25,7 +25,7 @@ class Challenge(object):
     def rest_endpoint(self):
         if not self._rest_endpoint:
             try:
-                slug = re.compile(ur'(?<=/)[a-z1-9-]+(?=/?)$')
+                slug = re.compile('(?<=/)[a-z1-9-]+(?=/?)$')
                 url_slug = slug.search(self.url).group()
             except AttributeError, e:
                 url_invalid = "'NoneType' object has no attribute 'group'"

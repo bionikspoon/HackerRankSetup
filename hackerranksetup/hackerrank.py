@@ -1,8 +1,7 @@
 # coding=utf-8
-import json
 import logging
-from os.path import join, dirname, isdir
 import shutil
+from os.path import join, dirname, isdir
 
 import click
 
@@ -11,16 +10,10 @@ from hackerranksetup.challenge import Challenge
 from hackerranksetup.readme import Readme
 from hackerranksetup.tableofcontents import TableOfContents
 
-# Setup
+
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
-logfile = join(dirname(__file__), 'logs', 'hackerranksetup.log')
 
-logging.basicConfig(filename=logfile, filemode='w', level=logging.INFO)
-logging.getLogger('requests').setLevel(logging.WARNING)
-
-
-# App
 @click.group(context_settings=CONTEXT_SETTINGS)
 @click.option('--debug', '-D', is_flag=True, default=False,
               help='Turn debug mode on.')
@@ -35,7 +28,6 @@ def cli(ctx, debug):
         logging.getLogger('requests').setLevel(logging.INFO)
         logging.getLogger().addHandler(logging.StreamHandler())
         logging.info('Debug On')
-
 
 
 @cli.command()
@@ -62,15 +54,10 @@ def new(ctx, url, force):
 @click.pass_context
 def publish(ctx, force):
     """Publish current puzzle."""
-
     logging.info('publish')
     logging.debug('ctx.obj:%s', ctx.obj)
 
     challenge = Challenge(ctx.obj.current_url)
-    # challenge._model = json.load(open(
-    #     '/home/manu/code/HackerRankSetup'
-    #     '/tests/test_assets/challenge_request.json'))[
-    #     'model']  # TODO delete this
 
     destination = join(ctx.obj.root, challenge.model['track']['track_slug'],
                        challenge.model['track']['slug'],

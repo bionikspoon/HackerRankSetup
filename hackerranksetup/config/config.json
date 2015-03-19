@@ -1,46 +1,46 @@
 {
   "HackerRank": {
-    "assets": "/home/manu/code/HackerRank/assets", 
-    "root": "/home/manu/code/HackerRank", 
+    "assets": "/home/manu/code/HackerRank/assets",
+    "root": "/home/manu/code/HackerRank",
     "workspace": "/home/manu/code/HackerRank/workspace"
-  }, 
+  },
   "Table of Contents": {
     "Algorithms": {
       "Sorting": {
         "Correctness and the Loop Invariant": {
-          "path": "algorithms/arrays-and-sorting/correctness-invariant", 
+          "path": "algorithms/arrays-and-sorting/correctness-invariant",
           "url": "https://www.hackerrank.com/challenges/correctness-invariant"
-        }, 
+        },
         "Insertion Sort - Part 1": {
-          "path": "algorithms/arrays-and-sorting/insertionsort1", 
+          "path": "algorithms/arrays-and-sorting/insertionsort1",
           "url": "https://www.hackerrank.com/challenges/insertionsort1"
-        }, 
+        },
         "Insertion Sort - Part 2": {
-          "path": "algorithms/arrays-and-sorting/insertionsort2", 
+          "path": "algorithms/arrays-and-sorting/insertionsort2",
           "url": "https://www.hackerrank.com/challenges/insertionsort2"
-        }, 
+        },
         "Quicksort 1 - Partition": {
-          "path": "algorithms/arrays-and-sorting/quicksort1", 
+          "path": "algorithms/arrays-and-sorting/quicksort1",
           "url": "https://www.hackerrank.com/challenges/quicksort1"
-        }, 
+        },
         "Quicksort 2 - Sorting": {
-          "path": "algorithms/arrays-and-sorting/quicksort2", 
+          "path": "algorithms/arrays-and-sorting/quicksort2",
           "url": "https://www.hackerrank.com/challenges/quicksort2"
         }
-      }, 
+      },
       "Summations and Algebra": {
         "Sherlock and Queries": {
-          "path": "algorithms/summations-and-algebra/sherlock-and-queries", 
+          "path": "algorithms/summations-and-algebra/sherlock-and-queries",
           "url": "https://www.hackerrank.com/challenges/sherlock-and-queries"
         }
-      }, 
+      },
       "Warmup": {
         "Solve me first": {
-          "path": "algorithms/warmup/solve-me-first", 
+          "path": "algorithms/warmup/solve-me-first",
           "url": "https://www.hackerrank.com/challenges/solve-me-first"
-        }, 
+        },
         "Solve me second": {
-          "path": "algorithms/warmup/solve-me-second", 
+          "path": "algorithms/warmup/solve-me-second",
           "url": "https://www.hackerrank.com/challenges/solve-me-second"
         }
       }

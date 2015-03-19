@@ -1,1 +1,11 @@
-{"$A$": "53d147e7f3fe6e47ee05b88b166bd3f6.png", "$N$": "f9c4988898e7f532b9f826a75014ed3c.png", "$M$": "fb97d38bcc19230b0acd442e17db879c.png", "$C$": "9b325b9e31e85137d1de765f43c0f8bc.png", "$B$": "61e84f854bc6258d4108d08d4c4a0852.png", "$1 \\le A[i], C[i] \\le 10^5$": "d133006232caf463e513a0ef1f36103c.png", "$1 \\le N, M \\le 10^5$": "404294123ec13c62c8a0b390d4e8f6ee.png", "$1 \\le B[i] \\le N$": "ef9ba375db3112e1c88aa798dd3522c4.png", "$(10^9 + 7)$": "c4e61dbf8b36a31aa53c4e418152f3d2.png"}
+{
+  "$A$": "53d147e7f3fe6e47ee05b88b166bd3f6.png",
+  "$N$": "f9c4988898e7f532b9f826a75014ed3c.png",
+  "$M$": "fb97d38bcc19230b0acd442e17db879c.png",
+  "$C$": "9b325b9e31e85137d1de765f43c0f8bc.png",
+  "$B$": "61e84f854bc6258d4108d08d4c4a0852.png",
+  "$1 \\le A[i], C[i] \\le 10^5$": "d133006232caf463e513a0ef1f36103c.png",
+  "$1 \\le N, M \\le 10^5$": "404294123ec13c62c8a0b390d4e8f6ee.png",
+  "$1 \\le B[i] \\le N$": "ef9ba375db3112e1c88aa798dd3522c4.png",
+  "$(10^9 + 7)$": "c4e61dbf8b36a31aa53c4e418152f3d2.png"
+}

@@ -1,4 +1,5 @@
 # coding=utf-8
+import json
 import logging
 from os.path import join, dirname, isdir
 import shutil
@@ -8,6 +9,7 @@ import click
 from hackerranksetup.configuration import Configuration
 from hackerranksetup.challenge import Challenge
 from hackerranksetup.readme import Readme
+from hackerranksetup.tableofcontents import TableOfContents
 
 # Setup
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
@@ -33,11 +35,7 @@ def cli(ctx, debug):
         logging.getLogger('requests').setLevel(logging.INFO)
         logging.getLogger().addHandler(logging.StreamHandler())
         logging.info('Debug On')
-        for section in ctx.obj.config.sections():
-            logging.debug('section:%s', section)
-            for option in ctx.obj.config.options(section):
-                logging.debug('%s:%s', option,
-                              ctx.obj.config.get(section, option))
+
 
 
 @cli.command()
@@ -56,26 +54,40 @@ def new(ctx, url, force):
     challenge = Challenge(url)
     Readme(challenge, ctx.obj.workspace, ctx.obj.assets).save()
 
-
-
-
-
     ctx.obj.current_url = str(url)
 
 
 @cli.command()
+@click.option('-F', '--force', is_flag=True, default=False)
 @click.pass_context
-def publish(ctx):
+def publish(ctx, force):
     """Publish current puzzle."""
 
     logging.info('publish')
     logging.debug('ctx.obj:%s', ctx.obj)
 
     challenge = Challenge(ctx.obj.current_url)
+    # challenge._model = json.load(open(
+    #     '/home/manu/code/HackerRankSetup'
+    #     '/tests/test_assets/challenge_request.json'))[
+    #     'model']  # TODO delete this
+
     destination = join(ctx.obj.root, challenge.model['track']['track_slug'],
                        challenge.model['track']['slug'],
                        challenge.model['slug'])
+    try:
+        shutil.rmtree(destination)
+    except OSError:
+        pass
+
     shutil.copytree(ctx.obj.workspace, destination)
+    logging.debug('copied workspace to destination %s', destination)
+    Readme(challenge, destination, ctx.obj.assets).save()
+    logging.debug('Rebuilt readme at destination %s', destination)
+
+    ctx.obj.reset()
+    ctx.obj.table_of_contents = challenge
+    TableOfContents(ctx.obj.table_of_contents, ctx.obj.root).save()
 
     template_directory = join(dirname(__file__), 'template')
     if isdir(ctx.obj.workspace):

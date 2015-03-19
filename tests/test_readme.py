@@ -1,6 +1,7 @@
 # coding=utf-8
 import json
 import os.path
+import cPickle
 
 import mock
 import pytest
@@ -10,6 +11,7 @@ from hackerranksetup.readme import Readme
 
 tests_directory = os.path.dirname(__file__)
 sample_assets = lambda x: os.path.join(tests_directory, 'test_assets', x)
+
 
 @pytest.fixture
 def readme(monkeypatch, tmpdir):
@@ -31,6 +33,13 @@ def readme(monkeypatch, tmpdir):
     assert readme_.challenge.model is challenge_model
     assert readme_.challenge.url is challenge_url
     return readme_
+
+
+@pytest.fixture
+def readme_unicode(readme):
+    with open(sample_assets('readme_challenge_unicode.p')) as f:
+        readme.challenge = cPickle.load(f)
+    return readme
 
 
 # noinspection PyProtectedMember
@@ -70,3 +79,13 @@ def test_saves_readme(readme, tmpdir):
         actual = f.read()
 
     assert actual == expected
+
+
+def test_source_can_work_with_unicode(readme_unicode):
+    with open(sample_assets('readme_source_unicode.md')) as f:
+        expected = f.read()
+    assert readme_unicode.source == expected
+
+
+def test_escapes_literal_parens(readme):
+    pass  # TODO

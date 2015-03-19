@@ -1,4 +1,5 @@
 # coding=utf-8
+import codecs
 import os
 import re
 import urllib
@@ -37,8 +38,12 @@ class Readme(object):
             link = '[{}]({})'.format(url_crumb, self.challenge.url)
             model_preview = model['preview'] if model['preview'] else ''
             preview = '{}'.format(model_preview)
-            body = ('\n##{}\n{}'.format('Problem Statement', model['_data'][
-                'problem_statement'].strip()))
+
+            problem_statement = codecs.encode(
+                model['_data']['problem_statement'], 'utf-8')
+            body = (
+                '\n##{}\n{}'.format('Problem Statement',
+                                    problem_statement.strip()))
             footnote = '\n[{}]:{}'.format('HackerRank', footnote['HackerRank'])
 
             source = '\n'.join([logo, name, link, preview, body, footnote])

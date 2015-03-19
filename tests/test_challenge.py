@@ -5,7 +5,7 @@ import cPickle
 
 import pytest
 
-from hackerranksetup.Challenge import Challenge
+from hackerranksetup.challenge import Challenge
 
 
 sample_url = ('https://www.hackerrank.com/'
@@ -18,7 +18,7 @@ with open(sample_assets('challenge_request.p')) as response:
 
 @pytest.fixture
 def challenge(monkeypatch):
-    monkeypatch.setattr('hackerranksetup.Challenge.requests.get',
+    monkeypatch.setattr('hackerranksetup.challenge.requests.get',
                         lambda _: challenge_request)
     challenge_ = Challenge(sample_url)
 

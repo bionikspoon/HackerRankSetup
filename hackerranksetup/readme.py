@@ -3,7 +3,7 @@ import os
 import re
 import urllib
 
-from hackerranksetup import TexImage
+from hackerranksetup import teximage
 
 
 class Readme(object):
@@ -51,7 +51,7 @@ class Readme(object):
     @property
     def readme(self):
         if not self._readme:
-            tex = TexImage.TexImage(self.assets)
+            tex = teximage.TexImage(self.assets)
             relpath_assets = os.path.relpath(self.assets, self.destination)
             footnote = {}
 

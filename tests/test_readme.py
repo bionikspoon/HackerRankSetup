@@ -5,12 +5,11 @@ import os.path
 import mock
 import pytest
 
-from hackerranksetup.Readme import Readme
+from hackerranksetup.readme import Readme
 
 
 tests_directory = os.path.dirname(__file__)
 sample_assets = lambda x: os.path.join(tests_directory, 'test_assets', x)
-
 
 @pytest.fixture
 def readme(monkeypatch, tmpdir):
@@ -22,7 +21,7 @@ def readme(monkeypatch, tmpdir):
 
     teximage_dict = json.load(open(sample_assets('readme_teximage.json')))
 
-    monkeypatch.setattr('hackerranksetup.TexImage.TexImage',
+    monkeypatch.setattr('hackerranksetup.teximage.TexImage',
                         lambda _: teximage_dict)
     tmpdir_destination = tmpdir.mkdir('workspace')
     tmpdir_assets = tmpdir.mkdir('assets')

@@ -5,7 +5,7 @@ import cPickle
 
 import pytest
 
-from hackerranksetup.TexImage import TexImage
+from hackerranksetup.teximage import TexImage
 
 
 tests_directory = os.path.dirname(__file__)
@@ -21,7 +21,7 @@ def teximage(monkeypatch, tmpdir):
 
         return cPickle.load(open(sample_assets(file_name)))
 
-    monkeypatch.setattr('hackerranksetup.TexImage.requests.get',
+    monkeypatch.setattr('hackerranksetup.teximage.requests.get',
                         mock_requests_get)
     teximage_ = TexImage(tmpdir.mkdir('assets').strpath)
 

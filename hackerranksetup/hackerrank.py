@@ -1,20 +1,18 @@
 # coding=utf-8
-import ConfigParser
 import logging
-import os.path
+from os.path import join, dirname, isdir
+import shutil
 
 import click
-import pkg_resources
 
-from hackerranksetup.Workspace import Workspace
-
+from hackerranksetup.configuration import Configuration
+from hackerranksetup.challenge import Challenge
+from hackerranksetup.readme import Readme
 
 # Setup
-CONFIG_FILE = pkg_resources.resource_stream(__name__, 'config/config.cfg')
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
-SELF_PATH = os.path.dirname(os.path.realpath(__file__))
-logfile = os.path.join(SELF_PATH, 'logs', 'hackerranksetup.log')
+logfile = join(dirname(__file__), 'logs', 'hackerranksetup.log')
 
 logging.basicConfig(filename=logfile, filemode='w', level=logging.INFO)
 logging.getLogger('requests').setLevel(logging.WARNING)
@@ -27,40 +25,42 @@ logging.getLogger('requests').setLevel(logging.WARNING)
 @click.pass_context
 def cli(ctx, debug):
     """HackerRank IDE setup utility."""
-    ctx.obj = {}
-    config = ConfigParser.SafeConfigParser()
-    config.readfp(CONFIG_FILE)
+
+    ctx.obj = Configuration()
 
     if debug:
         logging.getLogger().setLevel(logging.DEBUG)
         logging.getLogger('requests').setLevel(logging.INFO)
         logging.getLogger().addHandler(logging.StreamHandler())
         logging.info('Debug On')
-        for section in config.sections():
+        for section in ctx.obj.config.sections():
             logging.debug('section:%s', section)
-            for option in config.options(section):
-                logging.debug('%s:%s', option, config.get(section, option))
-
-    ctx.obj['root'] = os.path.realpath(
-        os.path.expanduser(config.get('HackerRank', 'Root')))
-    ctx.obj['workspace'] = os.path.realpath(
-        os.path.expanduser(config.get('HackerRank', 'Workspace')))
-    ctx.obj['assets'] = os.path.realpath(
-        os.path.expanduser(config.get('HackerRank', 'Assets')))
+            for option in ctx.obj.config.options(section):
+                logging.debug('%s:%s', option,
+                              ctx.obj.config.get(section, option))
 
 
 @cli.command()
+@click.option('-F', '--force', is_flag=True, default=False)
 @click.argument('url')
 @click.pass_context
-def new(ctx, url):
+def new(ctx, url, force):
     """Setup new workspace."""
+    if ctx.obj.current and not force:
+        raise click.ClickException(
+            'Workspace is in use.  Use -F or --force to override')
 
     logging.info('new:%s', url)
     logging.debug('ctx.obj:%s', ctx.obj)
 
-    workspace = Workspace(root=ctx.obj['root'], workspace=ctx.obj['workspace'],
-                          assets=ctx.obj['assets'])
-    workspace.new(url)
+    challenge = Challenge(url)
+    Readme(challenge, ctx.obj.workspace, ctx.obj.assets).save()
+
+
+
+
+
+    ctx.obj.current_url = str(url)
 
 
 @cli.command()
@@ -71,9 +71,17 @@ def publish(ctx):
     logging.info('publish')
     logging.debug('ctx.obj:%s', ctx.obj)
 
-    workspace = Workspace(root=ctx.obj['root'], workspace=ctx.obj['workspace'],
-                          assets=ctx.obj['assets'])
-    workspace.publish()
+    challenge = Challenge(ctx.obj.current_url)
+    destination = join(ctx.obj.root, challenge.model['track']['track_slug'],
+                       challenge.model['track']['slug'],
+                       challenge.model['slug'])
+    shutil.copytree(ctx.obj.workspace, destination)
+
+    template_directory = join(dirname(__file__), 'template')
+    if isdir(ctx.obj.workspace):
+        shutil.rmtree(ctx.obj.workspace)
+    shutil.copytree(template_directory, ctx.obj.workspace)
+    logging.debug('copied template to file://%s', ctx.obj.workspace)
 
 
 if __name__ == '__main__':

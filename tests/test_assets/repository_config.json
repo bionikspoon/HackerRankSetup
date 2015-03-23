@@ -273,8 +273,8 @@
     "url": "https://www.hackerrank.com/challenges/sherlock-and-queries"
   },
   "Directory": {
-    "assets": "/home/manu/code/HackerRank/assets",
-    "root": "/home/manu/code/HackerRank",
-    "workspace": "/home/manu/code/HackerRank/workspace"
+    "assets": "/home/manu/code/HackerRankSetup/tests/assets",
+    "root": "/home/manu/code/HackerRankSetup/tests",
+    "workspace": "/home/manu/code/HackerRankSetup/tests/workspace"
   }
 }

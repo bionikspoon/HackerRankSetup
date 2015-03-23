@@ -32,6 +32,11 @@ def test_challenge_initializes_properly(challenge):
     assert challenge._model is None
 
 
+def test_url_property_creates_url():
+    challenge = Challenge('/sherlock-and-queries')
+    assert challenge.url == sample_url
+
+
 def test_loads_model_into_json(challenge):
     with open(sample_assets('challenge_request.json')) as response:
         expected = json.load(response)['model']
@@ -47,6 +52,10 @@ def test_calculates_rest_endpoint(challenge):
 
 def test_rest_endpoint_raises_validation_error(challenge):
     bad_url = 'asdfasdf'
-    challenge.url = bad_url
     with pytest.raises(ValueError):
-        _ = challenge.rest_endpoint
+        challenge.url = bad_url
+
+
+def test_destination_returns_relpath_for_challenge(challenge):
+    expected = 'algorithms/summations-and-algebra/sherlock-and-queries'
+    assert challenge.path == expected

@@ -1,17 +1,21 @@
 # coding=utf-8
+import os.path
 import re
 
 import requests
 
 
 class Challenge(object):
-    rest_base = (
-        'https://www.hackerrank.com/rest/contests/master/challenges/')
+    rest_base = ('https://www.hackerrank.com/rest/'
+                 'contests/master/challenges/')
+    url_base = 'https://www.hackerrank.com/challenges/'
+    find_slug = re.compile('(?<=/)[a-z1-9-]+(?=/?)$')
 
-    def __init__(self, url):
-        self.url = url
+    def __init__(self, url, model=None):
+        self._url = None
         self._rest_endpoint = None
-        self._model = None
+        self._model = model
+        self.url = url
 
     @property
     def model(self):
@@ -24,14 +28,22 @@ class Challenge(object):
     @property
     def rest_endpoint(self):
         if not self._rest_endpoint:
-            try:
-                slug = re.compile('(?<=/)[a-z1-9-]+(?=/?)$')
-                url_slug = slug.search(self.url).group()
-            except AttributeError, e:
-                url_invalid = "'NoneType' object has no attribute 'group'"
-                error_message = 'Failed to get_rest_endpoint(%s)' % self.url
-                raise ValueError(
-                    error_message) if e.message == url_invalid else e
-            else:
-                self._rest_endpoint = self.rest_base + url_slug
+            slug = self.find_slug.search(self.url)
+            self._rest_endpoint = self.rest_base + slug.group()
         return self._rest_endpoint
+
+    @property
+    def url(self):
+        return self._url
+
+    @url.setter
+    def url(self, value):
+        slug = self.find_slug.search(value)
+        if not slug:
+            raise ValueError('URL or slug required')
+        self._url = self.url_base + slug.group()
+
+    @property
+    def path(self):
+        return os.path.join(self.model['track']['track_slug'],
+                            self.model['track']['slug'], self.model['slug'])

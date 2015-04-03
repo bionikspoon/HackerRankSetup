@@ -1,47 +1,39 @@
 # coding=utf-8
 import json
-import os
 import shutil
 
 import pytest
 
-from hackerranksetup.repository import Repository
-
-
-sample_url = ('https://www.hackerrank.com/'
-              'challenges/sherlock-and-queries')
-tests_directory = os.path.dirname(__file__)
-sample_assets = lambda x: os.path.join(tests_directory, 'test_assets', x)
-sample_config = sample_assets('repository_config.json')
+from hackerranksetup import Repository
+from tests import sample_config
 
 
 @pytest.fixture
 def repo(monkeypatch, tmpdir):
     mock_config = tmpdir.join('repository_config.json').strpath
     shutil.copyfile(sample_config, mock_config)
-    monkeypatch.setattr('hackerranksetup.repository.Repository.CONFIG_FILE',
-                        mock_config)
+    # monkeypatch.setattr('hackerranksetup.Repository.CONFIG_FILE',
+    #                     mock_config)
 
-    repository = Repository()
-    assert repository.CONFIG_FILE == tmpdir.join('repository_config.json')
+    repository = Repository(mock_config)
+    # assert repository.CONFIG_FILE == tmpdir.join('repository_config.json')
     return repository
 
 
 def test_config_file_patched_properly(repo, tmpdir):
-    assert repo.CONFIG_FILE == tmpdir.join('repository_config.json').strpath
-    assert repo['Directory']['root'] == '/home/manu/code/HackerRankSetup/tests'
+    assert repo.config_file == tmpdir.join('repository_config.json').strpath
+    assert repo.root == '/home/manu/code/HackerRankSetup/tests'
 
 
 def test_getitem_magic(repo):
-    actual = (
-        repo['Archive']['Algorithms']['Warmup']['Solve me first']['path'])
+    actual = (repo.archive['Algorithms']['Warmup']['Solve me first']['path'])
     assert actual == 'algorithms/warmup/solve-me-first'
 
-    assert repo['Current']['url'] == ('https://www.hackerrank.com/'
-                                      'challenges/sherlock-and-queries')
+    assert repo.current_challenge['url'] == ('https://www.hackerrank.com/'
+                                             'challenges/sherlock-and-queries')
 
-    assert repo['Directory']['assets'] == ("/home/manu/code/"
-                                           "HackerRankSetup/tests/assets")
+    assert repo.assets == ("/home/manu/code/"
+                           "HackerRankSetup/tests/assets")
 
 
 def test_repo_converts_to_dict(repo):
@@ -144,11 +136,11 @@ def test_repo_saves_on_del_current_challenge(repo, tmpdir):
 
 
 @pytest.mark.skipif
-def test_archive_challege_adds_challenge_to_config(repo):
+def test_archive_challenge_adds_challenge_to_config(repo):
     pass
 
 
 @pytest.mark.skipif
-def test_archive_challege_saves_changes(repo):
+def test_archive_challenge_saves_changes(repo):
     pass
 

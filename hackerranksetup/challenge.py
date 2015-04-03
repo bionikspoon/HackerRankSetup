@@ -1,6 +1,6 @@
 # coding=utf-8
 import codecs
-from  os.path import join
+from os.path import join
 import re
 
 import requests
@@ -22,8 +22,8 @@ class Challenge(object):
         self.url = url
 
     @classmethod
-    def from_repo(cls, data):
-        self = cls(data['url'], data, requests=requests)
+    def from_repo(cls, challenge, *args, **kwargs):
+        self = cls(challenge['url'], challenge, *args, **kwargs)
         return self
 
     def __getattr__(self, item):
@@ -75,7 +75,7 @@ class Challenge(object):
         return template.format('HackerRank', model['track']['track_name'],
                                model['track']['name'], model['name'])
 
-    def __dict__(self):
+    def json(self):
         model = self.model
         model['url'] = self.url
         return self.model

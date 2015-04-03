@@ -1,12 +1,10 @@
 # coding=utf-8
-from contextlib import contextmanager
-from functools import wraps
-import json
 import logging
-from os.path import exists, isdir
 import shutil
+from os.path import exists, isdir
+from contextlib import contextmanager
+
 import click
-from . import repo
 
 
 @contextmanager
@@ -40,14 +38,3 @@ def publish_workspace(workspace, destination, templates, force=False, ):
         # Repopulate workspace
         shutil.copytree(templates, workspace)
         logging.debug('copied template to file://%s', workspace)
-
-
-def save_config(func):
-    @wraps(func)
-    def wrapper(self, *args, **kwargs):
-        try:
-            return func(self, *args, **kwargs)
-        finally:
-            json.dump(repo.data, open(repo.config_file, 'w'), indent=2,
-                      sort_keys=True, separators=(',', ': '))
-    return wrapper

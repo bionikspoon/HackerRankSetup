@@ -11,7 +11,8 @@ class Readme(object):
         self.challenge = challenge
         self.destination = destination
         self.assets = assets
-        self.tex = tex_image(assets)
+
+        self.TexImage = tex_image
         self._source = None
         self._readme = None
 
@@ -26,6 +27,7 @@ class Readme(object):
 
     @property
     def source(self):
+
         if not self._source:
             challenge = self.challenge
             logo = '![{0}]'.format('HackerRank')
@@ -50,10 +52,11 @@ class Readme(object):
         if not self._readme:
             relpath_assets = os.path.relpath(self.assets, self.destination)
             footnote = {}
+            tex = self.TexImage(self.assets)
 
             def register_tex(match):
                 match = match.group()
-                tex_filename = self.tex.get(match)
+                tex_filename = tex.get(match)
 
                 match = match.replace('[', '').replace(']', '').replace('\\',
                                                                         '')

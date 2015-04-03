@@ -2,6 +2,7 @@
 import json
 from os.path import dirname, relpath, join
 import urllib
+
 from . import LOGO
 
 
@@ -36,6 +37,7 @@ class FrontPage(object):
 
     @property
     def source(self):
+
         footnote = {'HackerRank': LOGO}
         logo = '![{0}]'.format('HackerRank')
         name = '#{}'.format('Table of contents')

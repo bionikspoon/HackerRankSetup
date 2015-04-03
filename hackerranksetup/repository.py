@@ -1,11 +1,24 @@
 # coding=utf-8
+from functools import wraps
 import json
 
-from . import Challenge, save_config
+from . import Challenge
+
+
+def save_config(func):
+    @wraps(func)
+    def wrapper(self, *args, **kwargs):
+        try:
+            return func(self, *args, **kwargs)
+        finally:
+            json.dump(self.data, open(self.config_file, 'w'), indent=2,
+                      sort_keys=True, separators=(',', ': '))
+
+    return wrapper
 
 
 class Repository(object):
-    data = None
+    data = {}
 
     def __init__(self, config_file, challenge=Challenge):
         self.config_file = config_file
@@ -31,7 +44,7 @@ class Repository(object):
     @current_challenge.setter
     @save_config
     def current_challenge(self, challenge):
-        self.data['Current'] = dict(challenge)
+        self.data['Current'] = challenge.json()
 
     @current_challenge.deleter
     @save_config

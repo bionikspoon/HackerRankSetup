@@ -1,18 +1,17 @@
 # coding=utf-8
 import logging
-from os.path import join, dirname
+from os.path import join
 
 import click
 
-from . import (Challenge, Readme, FrontPage, repo, publish_workspace,
-               templates_path)
-
+from hackerranksetup import (repo, templates_path, Challenge, FrontPage, Readme,
+                             publish_workspace)
 
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
 
 @click.group(context_settings=CONTEXT_SETTINGS)
-@click.option('--debug', '-D', is_flag=True, default=False,
+@click.option('--debug', '-d', is_flag=True, default=False,
               help='Turn debug mode on.')
 def cli(debug):
     """HackerRank IDE setup utility."""
@@ -25,7 +24,7 @@ def cli(debug):
 
 
 @cli.command()
-@click.option('-F', '--force', is_flag=True, default=False)
+@click.option('-f', '--force', is_flag=True, default=False)
 @click.argument('url')
 def new(url, force):
     """Setup new workspace."""
@@ -40,12 +39,16 @@ def new(url, force):
 
 
 @cli.command()
-@click.option('-F', '--force', is_flag=True, default=False)
+@click.option('-f', '--force', is_flag=True, default=False)
 def publish(force):
     """Publish current puzzle."""
 
+    if not repo.current_challenge:
+        message = 'No current challenge to publish.'
+        raise click.ClickException(message)
+
     logging.info('publishing current challenge')
-    challenge = Challenge(repo.current_challenge)
+    challenge = Challenge.from_repo(repo.current_challenge)
 
     destination = join(repo.root, challenge.path)
 

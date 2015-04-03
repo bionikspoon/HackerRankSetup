@@ -1,24 +1,20 @@
 # coding=utf-8
 import json
-import os.path
 import cPickle
 
 import pytest
 
-from hackerranksetup.challenge import Challenge
+from hackerranksetup import Challenge
+from tests import sample_url, sample_assets
 
 
-sample_url = ('https://www.hackerrank.com/'
-              'challenges/sherlock-and-queries')
-tests_directory = os.path.dirname(__file__)
-sample_assets = lambda x: os.path.join(tests_directory, 'test_assets', x)
 with open(sample_assets('challenge_request.p')) as response:
     challenge_request = cPickle.load(response)
 
 
 @pytest.fixture
 def challenge(monkeypatch):
-    monkeypatch.setattr('hackerranksetup.challenge.requests.get',
+    monkeypatch.setattr('requests.get',
                         lambda _: challenge_request)
     challenge_ = Challenge(sample_url)
 

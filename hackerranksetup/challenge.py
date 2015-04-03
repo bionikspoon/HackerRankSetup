@@ -1,5 +1,6 @@
 # coding=utf-8
-import os.path
+import codecs
+from  os.path import join
 import re
 
 import requests
@@ -11,16 +12,42 @@ class Challenge(object):
     url_base = 'https://www.hackerrank.com/challenges/'
     find_slug = re.compile('(?<=/)[a-z1-9-]+(?=/?)$')
 
-    def __init__(self, url, model=None):
+    _challenge_map = None
+
+    def __init__(self, url, model=None, requests=requests):
         self._url = None
         self._rest_endpoint = None
+        self.requests = requests
         self._model = model
         self.url = url
+
+    @classmethod
+    def from_repo(cls, data):
+        self = cls(data['url'], data, requests=requests)
+        return self
+
+    def __getattr__(self, item):
+        return self.challenge_map.get(item)
+
+    @property
+    def challenge_map(self):
+        if not self._challenge_map:
+            model = self.model
+            data = {'name': model['name'].strip(),
+                    'preview': model['preview'] if model['preview'] else '',
+                    'problem_statement': codecs.encode(
+                        model['_data']['problem_statement'], 'utf-8').strip(),
+                    'path': join(model['track']['track_slug'],
+                                 model['track']['slug'], model['slug']),
+                    'track_main': model['track']['track_name'],
+                    'track_sub': model['track']['name']}
+            self._challenge_map = data
+        return self._challenge_map
 
     @property
     def model(self):
         if not self._model:
-            response = requests.get(self.rest_endpoint)
+            response = self.requests.get(self.rest_endpoint)
             response.raise_for_status()
             self._model = response.json()['model']
         return self._model
@@ -43,7 +70,12 @@ class Challenge(object):
             raise ValueError('URL or slug required')
         self._url = self.url_base + slug.group()
 
-    @property
-    def path(self):
-        return os.path.join(self.model['track']['track_slug'],
-                            self.model['track']['slug'], self.model['slug'])
+    def url_crumb(self, template='{} \ {} \ {} \ {}'):
+        model = self.model
+        return template.format('HackerRank', model['track']['track_name'],
+                               model['track']['name'], model['name'])
+
+    def __dict__(self):
+        model = self.model
+        model['url'] = self.url
+        return self.model

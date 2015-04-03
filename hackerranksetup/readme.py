@@ -1,24 +1,24 @@
 # coding=utf-8
-import codecs
 import os
 import re
 import urllib
 
-from hackerranksetup import teximage
+from . import TexImage, LOGO
 
 
 class Readme(object):
-    hackerrank_logo = ('https://www.hackerrank.com'
-                       '/assets/brand/typemark_60x200.png')
-
-    def __init__(self, challenge, destination, assets):
+    def __init__(self, challenge, destination, assets, tex_image=TexImage):
         self.challenge = challenge
         self.destination = destination
         self.assets = assets
+        self.tex = tex_image(assets)
         self._source = None
         self._readme = None
 
-    def save(self):
+    @classmethod
+    def save(cls, *args, **kwargs):
+        self = cls(*args, **kwargs)
+
         filename = os.path.join(self.destination, 'README.md')
         with open(filename, 'w') as f:
             f.write(self.readme)
@@ -27,26 +27,18 @@ class Readme(object):
     @property
     def source(self):
         if not self._source:
-            model = self.challenge.model
-            footnote = {'HackerRank': self.hackerrank_logo}
+            challenge = self.challenge
             logo = '![{0}]'.format('HackerRank')
-            name = '#{}'.format(model['name'].strip())
-            url_crumb = '{} \ {} \ {} \ {}'.format('HackerRank',
-                                                   model['track']['track_name'],
-                                                   model['track']['name'],
-                                                   model['name'])
-            link = '[{}]({})'.format(url_crumb, self.challenge.url)
-            model_preview = model['preview'] if model['preview'] else ''
-            preview = '{}'.format(model_preview)
+            name = '#{}'.format(challenge.name)
+            link = '[{}]({})'.format(challenge.url_crumb('{} \ {} \ {} \ {}'),
+                                     challenge.url)
 
-            problem_statement = codecs.encode(
-                model['_data']['problem_statement'], 'utf-8')
-            body = (
-                '\n##{}\n{}'.format('Problem Statement',
-                                    problem_statement.strip()))
-            footnote = '\n[{}]:{}'.format('HackerRank', footnote['HackerRank'])
+            body = ('\n##{}\n{}'.format('Problem Statement',
+                                        challenge.problem_statement))
+            footnote = '\n[{}]:{}'.format('HackerRank', LOGO)
 
-            source = '\n'.join([logo, name, link, preview, body, footnote])
+            source = '\n'.join(
+                [logo, name, link, challenge.preview, body, footnote])
 
             source = re.compile(' +$', re.M).sub('', source)
             source = re.compile('\t').sub('    ', source)
@@ -56,13 +48,12 @@ class Readme(object):
     @property
     def readme(self):
         if not self._readme:
-            tex = teximage.TexImage(self.assets)
             relpath_assets = os.path.relpath(self.assets, self.destination)
             footnote = {}
 
             def register_tex(match):
                 match = match.group()
-                tex_filename = tex.get(match)
+                tex_filename = self.tex.get(match)
 
                 match = match.replace('[', '').replace(']', '').replace('\\',
                                                                         '')
@@ -72,12 +63,11 @@ class Readme(object):
             readme = self.source
             h3 = re.compile('^\*\*([\w ?]+)\*\*$', re.M)
             readme = h3.sub(r'###\1', readme)
-            newline = (
-                '(```)([^`]*?)(?(2)(```))'
-                '|(?:(?:\n?(?: {4,})+.*\n)+\n?)'
-                '|(?P<space>(?<!\n)\n(?!\n))')
-            repl = lambda x: "\n\n" if x.group('space') else x.group()
-            readme = re.compile(newline).sub(repl, readme)
+            newline = ('(```)([^`]*?)(?(2)(```))'
+                       '|(?:(?:\n?(?: {4,})+.*\n)+\n?)'
+                       '|(?P<space>(?<!\n)\n(?!\n))')
+            replacement = lambda x: "\n\n" if x.group('space') else x.group()
+            readme = re.compile(newline).sub(replacement, readme)
             tex_search = re.compile('\$[^$]+\$')
             readme = tex_search.sub(register_tex, readme)
 

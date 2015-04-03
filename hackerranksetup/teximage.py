@@ -8,8 +8,9 @@ import requests
 class TexImage(object):
     url_endpoint = 'http://chart.apis.google.com/chart'
 
-    def __init__(self, assets):
+    def __init__(self, assets, requests=requests):
         self.assets = assets
+        self.requests = requests
 
     def get(self, code):
         hash_id = hashlib.md5(code).hexdigest()
@@ -23,7 +24,7 @@ class TexImage(object):
 
     def save(self, code, file_path):
         params = {'cht': 'tx', 'chs': 20, 'chl': code}
-        response = requests.get(self.url_endpoint, params=params)
+        response = self.requests.get(self.url_endpoint, params=params)
 
         with open(file_path, 'wb') as f:
             f.write(response.content)

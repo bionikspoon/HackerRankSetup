@@ -1,32 +1,40 @@
 # coding=utf-8
 import json
+from mock import Mock
 
-import mock
 import pytest
+import requests
 
-from hackerranksetup import Readme
-from tests import sample_assets
+from hackerranksetup import Readme, Challenge, TexImage
+from tests import sample_assets, sample_url
+
+teximage_dict = json.load(open(sample_assets('readme_teximage.json')))
 
 
 @pytest.fixture
-def readme(monkeypatch, tmpdir):
-    challenge_url = ('https://www.hackerrank.com/'
-                     'challenges/sherlock-and-queries')
+def mock_tex_image():
+    mock = Mock(spec=TexImage)
+    mock.return_value = mock
+    mock.get.side_effect = teximage_dict.get
+    return mock
+
+
+@pytest.fixture
+def mock_challenge():
     challenge_model = json.load(open(sample_assets('challenge_request.json')))[
         'model']
-    challenge = mock.MagicMock(model=challenge_model, url=challenge_url)
+    mock_challenge_ = Challenge(sample_url, model=challenge_model,
+                                requests=Mock(spec=requests))
+    return mock_challenge_
 
-    teximage_dict = json.load(open(sample_assets('readme_teximage.json')))
 
-    monkeypatch.setattr('hackerranksetup.TexImage',
-                        lambda _: teximage_dict)
+@pytest.fixture
+def readme(tmpdir, mock_tex_image, mock_challenge):
     tmpdir_destination = tmpdir.mkdir('workspace')
     tmpdir_assets = tmpdir.mkdir('assets')
-    readme_ = Readme(challenge, tmpdir_destination.strpath,
-                     tmpdir_assets.strpath)
+    readme_ = Readme(mock_challenge, tmpdir_destination.strpath,
+                     tmpdir_assets.strpath, tex_image=mock_tex_image)
 
-    assert readme_.challenge.model is challenge_model
-    assert readme_.challenge.url is challenge_url
     return readme_
 
 
@@ -69,7 +77,7 @@ def test_compile_source_from_model(readme):
         expected_source = f.read()
     assert readme.source == expected_source
 
-@pytest.mark.skipif
+
 def test_compile_readme_from_source(readme):
     with open(sample_assets('readme_source.md')) as f:
         readme._source = f.read()
@@ -80,13 +88,17 @@ def test_compile_readme_from_source(readme):
     assert readme.readme == expected_readme
 
 
-def test_saves_readme(readme, tmpdir):
+def test_saves_readme(tmpdir, mock_challenge, mock_tex_image):
     with open(sample_assets('readme_source.md')) as f:
         readme._source = f.read()
     with open(sample_assets('readme_readme.md')) as f:
         expected = f.read()
 
-    readme.save()
+    tmpdir_destination = tmpdir.mkdir('workspace')
+    tmpdir_assets = tmpdir.mkdir('assets')
+    Readme.save(mock_challenge, tmpdir_destination.strpath,
+                tmpdir_assets.strpath, tex_image=mock_tex_image)
+
     with open(tmpdir.join('workspace', 'README.md').strpath) as f:
         actual = f.read()
 

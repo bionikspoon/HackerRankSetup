@@ -40,7 +40,8 @@ class Challenge(object):
                     'path': join(model['track']['track_slug'],
                                  model['track']['slug'], model['slug']),
                     'track_main': model['track']['track_name'],
-                    'track_sub': model['track']['name']}
+                    'track_sub': model['track']['name'],
+                    'slug': model['slug']}
             self._challenge_map = data
         return self._challenge_map
 

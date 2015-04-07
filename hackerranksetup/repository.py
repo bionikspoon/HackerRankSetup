@@ -18,9 +18,10 @@ def save_config(func):
 
 
 class Repository(object):
-    data = {}
+
 
     def __init__(self, config_file, challenge=Challenge):
+        self.data = {}
         self.config_file = config_file
         self.data = json.load(open(self.config_file))
         self.Challenge = challenge

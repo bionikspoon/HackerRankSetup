@@ -1,0 +1,14 @@
+[run]
+;branch = True
+include =
+    hackerranksetup/__init__.py
+    hackerranksetup/challenge.py
+    hackerranksetup/frontpage.py
+    hackerranksetup/hackerrank.py
+    hackerranksetup/readme.py
+    hackerranksetup/repository.py
+    hackerranksetup/teximage.py
+    hackerranksetup/utilities.py
+
+[html]
+directory = coverage_report
